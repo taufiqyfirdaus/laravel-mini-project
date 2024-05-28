@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Product')
+@section('title', 'Beranda')
 @section('navbar')
     <nav class="navbar navbar-expand-lg navbar-dark position-fixed w-100" style="background-color: black;">
         <div class="container-fluid">
