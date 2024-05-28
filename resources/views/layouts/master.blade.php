@@ -17,7 +17,7 @@
 <body style="background-color: black">
     @yield('navbar')
     <div class="d-flex flex-nowrap w-100 overflow-auto">
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed border-end border-secondary" style="width: 18%; height: 100vh; background-color: black;;">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed border-end border-secondary" style="width: 18%; height: 100vh; background-color: black; z-index:150;">
             @auth
                 <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                     <div class="row py-2">
@@ -39,7 +39,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a href="{{ route('explore') }}" class="nav-link text-white">
                             <i class="bi bi-search" style="margin-right:25px; color: #439089;"></i>
                             Explore
                         </a>
@@ -90,7 +90,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a href="{{ route('explore') }}" class="nav-link text-white">
                             <i class="bi bi-search" style="margin-right:25px; color: #439089;"></i>
                             Explore
                         </a>
@@ -105,7 +105,7 @@
             @endauth
         </div>
         @unless (auth()->check())
-            <div class="position-fixed bottom-0 w-100 p-4 text-white" style="background-color: #2E6F72">
+            <div class="position-fixed bottom-0 w-100 p-4 text-white" style="background-color: #2E6F72; z-index:200;">
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h5 style="margin-left: 100px;">Jangan ketinggalan berita terbaru</h5>
@@ -118,7 +118,7 @@
                 </div>
             </div>
         @endunless
-        <div class="bg-dark" style="margin-left: 18vw; width:82%">
+        <div class="contents" style="margin-left: 18vw; width:80%">
             <main class="flex-shrink-0">
                 @yield('content')
             </main>

@@ -18,7 +18,9 @@
         <div class="row justify-content-center my-5 px-5 text-white">
             <h1 class="h3 mb-3 fw-bold text-center">Register</h1>
             <div class="col-md-4">
-                <img src="{{ asset('assets/logo-medsos.png') }}" alt="logo-medsos" width="200px" style="margin-left:150px; margin-top:60px;">
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('assets/logo-medsos.png') }}" alt="logo-medsos" width="200px" style="margin-left:150px; margin-top:60px;">
+                </a>
             </div>
             <div class="col-md-8 p-4">
                 <!-- error message -->
@@ -105,7 +107,7 @@
                 </div>
             </div>
             <div class="col-md-4 d-flex justify-content-center align-items-end p-4">
-                <h5 class="text-center fw-bold mb-0">© 2024</h5>
+                <h5 class="text-center fw-bold mb-0">© 2024 Sosmed</h5>
             </div>
             <div class="col-md-4 py-4 px-5">
                 <h5 class="text-center fw-bold mb-4">Kontak</h5>
