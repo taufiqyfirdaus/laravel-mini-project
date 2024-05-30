@@ -18,9 +18,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'username',
         'name',
         'email',
         'password',
+        'profile_pic',
+        'bio',
     ];
 
     /**
@@ -41,4 +44,25 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function followers()
+    {
+        return $this->hasMany(Follower::class, 'follower_id', 'id');
+    }
+
+    public function followings()
+    {
+        return $this->hasMany(Follower::class, 'following_id');
+    }
+
+    public function isFollowed()
+    {
+        return $this->hasMany(Follower::class, 'follower_id')->where('following_id', auth()->id());
+    }
+
 }

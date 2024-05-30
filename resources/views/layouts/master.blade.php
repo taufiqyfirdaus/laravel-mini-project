@@ -19,14 +19,12 @@
     <div class="d-flex flex-nowrap w-100 overflow-auto">
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed border-end border-secondary" style="width: 18%; height: 100vh; background-color: black; z-index:150;">
             @auth
-                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                    <div class="row py-2">
-                        <div class="col-md-3">
-                            <img src="{{ asset('assets/default_profile.png') }}" alt="logo-medsos" width="40px">
-                        </div>
-                        <div class="col-md-9">
-                            <span class="fs-6">{{ Auth::user()->name }}</span>
-                            <p class="mb-0 text-secondary" style="font-size: 12px;">Peserta MSIB</p>
+                <a href="{{ route('show-profile') }}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                    <div class="d-flex align-items-center">
+                        <img class="rounded-circle ms-2 me-2" src="{{ Auth::user()->profile_pic }}" alt="profile pic" width="35px">
+                        <div class="d-flex flex-column">
+                            <span class="fs-6">{{ Auth::user()->username }}</span>
+                            <p class="mb-0 text-secondary" style="font-size: 12px;">{{ Auth::user()->name }}</p>
                         </div>
                     </div>
                 </a>
@@ -34,7 +32,7 @@
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
                         <a href="{{ route('home') }}" class="nav-link text-white">
-                            <i class="bi bi-house-fill" style="margin-right:25px; color: #439089;"></i>
+                            <i class="bi bi-house-door-fill" style="margin-right:25px; color: #439089;"></i>
                             Beranda
                         </a>
                     </li>
@@ -51,7 +49,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a href="{{ route('show-form-add-post') }}" class="nav-link text-white">
                             <i class="bi bi-plus-lg" style="margin-right:25px; color: #439089;"></i>
                             Posting
                         </a>
@@ -85,7 +83,7 @@
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
                         <a href="{{ route('home') }}" class="nav-link text-white">
-                            <i class="bi bi-house-fill" style="margin-right:25px; color: #439089;"></i>
+                            <i class="bi bi-house-door-fill" style="margin-right:25px; color: #439089;"></i>
                             Beranda
                         </a>
                     </li>
@@ -129,4 +127,5 @@
     </script>
     @stack('scripts')
 </body>
+
 </html>

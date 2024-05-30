@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>@yield('title')</title>
+    <title>Register Page</title>
     <!-- Bootstrap core CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
         crossorigin="anonymous">
@@ -23,14 +23,22 @@
                 </a>
             </div>
             <div class="col-md-8 p-4">
-                <!-- error message -->
-                @if (session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
-                <!-- success message -->
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
+                <div class="w-75">
+                    <!-- error message -->
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    <!-- success message -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                </div>
 
                 <form class="w-75" action="{{ route('register-user') }}" method="POST">
                     @csrf
@@ -38,8 +46,8 @@
                         <div class="col-sm-6" style="padding-right: 2px;">
                             <div class="form-group mb-3">
                                 <label class="mb-2" for="username"><b>Username</b></label>
-                                <input type="text" name="username" id="username" class="form-control" placeholder="Masukkan username" required>
-                                @error('email')
+                                <input type="text" name="username" id="username" class="form-control" placeholder="Masukkan username" value="{{ old('username') }}" required>
+                                @error('username')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -47,7 +55,7 @@
                         <div class="col-sm-6" style="padding-left: 2px;">
                             <div class="form-group mb-3">
                                 <label class="mb-2" for="name"><b>Nama</b></label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Masukkan nama lengkap" required>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Masukkan nama lengkap" value="{{ old('name') }}" required>
                                 @error('name')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror
@@ -56,7 +64,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label class="mb-2" for="email"><b>E-mail</b></label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Masukkan email" required>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Masukkan email" value="{{ old('email') }}" required>
                         @error('email')
                             <div class="text-danger mt-2">{{ $message }}</div>
                         @enderror

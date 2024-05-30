@@ -35,15 +35,15 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'profile_pic' => 'assets/default_profile.png',
         ]);
-        
-        $user->assignRole('user');
 
         if ($user) {
-            return redirect()->route('login');
+            return redirect()->route('login')
+                ->with('success', 'Akun Berhasil dibuat, silahkan login.');
         } else {
             return redirect()->route('register')
-                ->with('error', 'Failed to create user');
+                ->with('error', 'Gagal membuat akun.');
         }
     }
 
@@ -70,7 +70,7 @@ class UserController extends Controller
             return redirect()->route('home');
         } else {
             return redirect()->route('login')
-                ->with('error', 'Login failed email or password is incorrect');
+                ->with('error', 'Login gagal, username atau password salah!');
         }
     }
 
@@ -79,5 +79,16 @@ class UserController extends Controller
         Auth::logout();
 
         return redirect()->route('login');
+    }
+
+    public function showProfile()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        return view('profile.index', compact('user'));
     }
 }
