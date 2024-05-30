@@ -21,7 +21,7 @@
             @auth
                 <a href="{{ route('show-profile') }}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                     <div class="d-flex align-items-center">
-                        <img class="rounded-circle ms-2 me-2" src="{{ Auth::user()->profile_pic }}" alt="profile pic" width="35px">
+                        <img class="rounded-circle ms-2 me-2" src="{{ asset(Auth::user()->profile_pic) }}" alt="profile pic" width="35px">
                         <div class="d-flex flex-column">
                             <span class="fs-6">{{ Auth::user()->username }}</span>
                             <p class="mb-0 text-secondary" style="font-size: 12px;">{{ Auth::user()->name }}</p>

@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Beranda')
+@section('title', 'Posting')
 @section('navbar')
     <style>
         .custom-input::placeholder {
@@ -27,7 +27,7 @@
                         <div class="row">
                             <div class="col-md-2 d-flex align-items-center">
                                 <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="{{ asset('assets/default_profile.png') }}" alt="profile pic" height="30px">
+                                    <img class="rounded-circle me-3" src="{{ Auth::user()->profile_pic }}" alt="profile pic" height="30px">
                                 </div>
                             </div>
                             <div class="col-md-8">
@@ -55,9 +55,13 @@
                         <label for="post_pic" id="imageLabel" class="form-label d-flex flex-column align-items-center justify-content-center"
                             style="cursor: pointer; border: 1px solid #6c757d; padding: 10px; height:300px; width: 100%;">
                             <span class="fw-bold">Pilih gambar</span>
-                            <input class="form-control {{ $errors->has('post_pic') ? 'is-invalid' : '' }} d-none" type="file" id="post_pic" name="post_pic" accept="image/*" value="{{ old('post_pic') }}">
+                            <input class="form-control {{ $errors->has('post_pic') ? 'is-invalid' : '' }} d-none" type="file" id="post_pic" name="post_pic" accept="image/*"
+                                value="{{ old('post_pic') }}">
                         </label>
                         <img id="preview" class="rounded-3 w-100 d-none" alt="post image">
+                        <button id="removeImageButton" class="btn btn-danger btn-sm position-absolute top-0 end-0 mt-2 me-2 d-none" type="button">
+                            <i class="bi bi-trash"></i>
+                        </button>
                         @if ($errors->has('post_pic'))
                             <div class="invalid-feedback">
                                 <b>{{ $errors->first('post_pic') }}</b>
@@ -83,12 +87,24 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const preview = document.getElementById('preview');
+                    const removeImageButton = document.getElementById('removeImageButton');
                     preview.src = e.target.result;
                     preview.classList.remove('d-none');
                     document.getElementById('imageLabel').classList.add('d-none');
+                    removeImageButton.classList.remove('d-none');
                 }
                 reader.readAsDataURL(file);
             }
+        });
+
+        document.getElementById('removeImageButton').addEventListener('click', function() {
+            const preview = document.getElementById('preview');
+            const inputFile = document.getElementById('post_pic');
+            const removeImageButton = document.getElementById('removeImageButton');
+            preview.classList.add('d-none');
+            removeImageButton.classList.add('d-none');
+            inputFile.value = '';
+            document.getElementById('imageLabel').classList.remove('d-none');
         });
     </script>
 @endsection

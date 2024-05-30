@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Beranda')
+@section('title', 'See Post')
 @section('navbar')
     <style>
         .custom-input::placeholder {
@@ -34,17 +34,17 @@
                                 <div class="col-md-10 d-flex align-items-center">
                                     <a href="" class="text-decoration-none">
                                         <div class="d-flex align-items-center">
-                                            <img class="rounded-circle me-3" src="{{ asset('assets/default_profile.png') }}" alt="profile pic" height="30px">
+                                            <img class="rounded-circle me-3" src="{{ asset($post->user->profile_pic) }}" alt="profile pic" height="30px">
                                             <div class="d-flex flex-column">
-                                                <p class="fw-bold mb-0 text-white" style="font-size: 14px">Username</p>
+                                                <p class="fw-bold mb-0 text-white" style="font-size: 14px">{{ $post->user->username }}</p>
                                             </div>
                                         </div>
                                     </a>
                                 </div>
                             </div>
-                            <p class="my-3">Description</p>
+                            <p class="my-3">{{ $post->description }}</p>
                         </div>
-                        <img src="{{ asset('assets/no_image.png') }}" class="rounded-3 w-100 mb-3" alt="post image">
+                        <img src="{{ $post->post_pic }}" class="rounded-3 w-100 mb-3" alt="post image">
                     </div>
                     <div class="col-md-5">
                         <h6 class="fw-bold mt-2">komentar</h6>
@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <h6 class="mb-0">0 Likes</h6>
-                        <p class="text-secondary mb-4" style="font-size: 13px">1 day ago</p>
+                        <p class="text-secondary mb-4 mt-1" style="font-size: 13px">{{ $post->created_at->diffForHumans() }}</p>
                         <div class="row mb-1">
                             <div class="col-md-10">
                                 <textarea name="comment" id="comment" class="form-control custom-input text-white border-bottom border-secondary border-start-0 border-end-0 border-top-0" placeholder="Tambahkan komentar"

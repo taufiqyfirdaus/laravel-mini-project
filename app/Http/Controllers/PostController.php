@@ -41,8 +41,28 @@ class PostController extends Controller
     }
     
     public function showPost(Request $request){
+        $loggedInUserId = Auth::id();
+        $randomUsers = $this->userRecommendation($loggedInUserId);
+        
         $posts = Post::orderBy('created_at', 'desc')->get();
 
-        return view('pages.home', compact('posts'));
+        return view('pages.home', compact('posts', 'randomUsers'));
+    }
+
+    public function userRecommendation($loggedInUserId)
+    {
+        return User::where('id', '!=', $loggedInUserId)
+                   ->inRandomOrder()
+                   ->limit(3)
+                   ->get();
+    }
+
+    // public function showDetailPost($postSlug){
+    //     $post = Post::where('slug', $postSlug)->firstOrFail();
+    //     return view('pages.seePost', compact('post'));
+    // }
+
+    public function showDetailPost(Post $post){
+        return view('pages.seePost', compact('post'));
     }
 }

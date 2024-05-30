@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExploreController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -16,9 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [PostController::class, 'showPost'])->name('home');
-Route::get('/seePost', function () {return view('pages.seePost');})->name('seePost');
+Route::get('/seePost/{post}', [PostController::class, 'showDetailPost'])->name('see-post');
 
-Route::get('/explore-people', function () {return view('pages.explore');})->name('explore');
+Route::get('/explore-people', [ExploreController::class, 'index'])->name('explore');
+Route::get('/search', [ExploreController::class, 'search'])->name('explore-search');
 
 Route::get('/login', [UserController::class, 'login'])->name('login');
 Route::post('/login', [UserController::class, 'loginUser'])->name('login-user');
@@ -27,7 +29,7 @@ Route::post('/register-user', [UserController::class, 'registerUser'])->name('re
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::prefix('')->middleware('authenticate')->group(function () {
-    Route::get('/MyProfile', [UserController::class, 'showProfile'])->name('show-profile');
-    Route::get('/formPost', [PostController::class, 'showFormAdd'])->name('show-form-add-post');
+    Route::get('/my-profile', [UserController::class, 'showProfile'])->name('show-profile');
+    Route::get('/form-post', [PostController::class, 'showFormAdd'])->name('show-form-add-post');
     Route::post('/{user}/store', [PostController::class, 'store'])->name('store-post');
 });

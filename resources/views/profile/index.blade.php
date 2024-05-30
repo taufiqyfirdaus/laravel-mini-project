@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Beranda')
+@section('title', 'Profile')
 @section('content')
     <div class="row">
         <div class="d-flex flex-column px-5" style="margin-top:80px; margin-bottom:150px;">
