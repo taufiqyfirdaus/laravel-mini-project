@@ -30,9 +30,9 @@
                     <div class="card-header px-0">
                         <div class="row">
                             <div class="col-md-10 d-flex align-items-center">
-                                <a href="" class="text-decoration-none">
+                                <a href="{{ route('see-profiles', ['user' => $item->user->id]) }}" class="text-decoration-none">
                                     <div class="d-flex align-items-center">
-                                        <img class="rounded-circle me-3" src="{{ $item->user->profile_pic }}" alt="profile pic" height="30px">
+                                        <img class="object-fit-cover rounded-circle me-3" src="{{ $item->user->profile_pic }}" alt="profile pic" height="30px" width="30px">
                                         <div class="d-flex flex-column">
                                             <p class="fw-bold mb-0 text-white" style="font-size: 14px">{{ $item->user->username }}</p>
                                             <p class="text-secondary mb-0" style="font-size: 13px">{{ $item->created_at->diffForHumans() }}</p>
@@ -82,9 +82,9 @@
                 @foreach ($randomUsers as $item)
                     <div class="row mb-2">
                         <div class="col-md-8 d-flex align-items-center">
-                            <a href="" class="text-decoration-none">
+                            <a href="{{ route('see-profiles', ['user' => $item->id]) }}" class="text-decoration-none">
                                 <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="{{ $item->profile_pic }}" alt="profile pic" height="40px">
+                                    <img class="object-fit-cover rounded-circle me-3" src="{{ asset($item->profile_pic) }}" alt="profile pic" height="40px" width="40px">
                                     <div class="d-flex flex-column">
                                         <p class="fw-bold mb-0 text-white">{{ $item->username }}</p>
                                         <p class="text-secondary mb-0" style="font-size: 13px">{{ $item->name }}</p>
@@ -93,7 +93,7 @@
                             </a>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-link text-decoration-none fw-bold ms-3" style="color: #439089;" type="button" id="toggleBookmark">
+                            <button class="btn btn-link text-decoration-none fw-bold ms-3" style="color: #439089;" type="button" id="toggleFollow">
                                 Follow
                             </button>
                         </div>

@@ -21,7 +21,7 @@
     <div class="row">
         <div class="d-flex flex-column align-items-center" style="margin-top:80px; margin-bottom:150px;">
             <div class="w-100 d-flex justify-content-start">
-                <a href="{{ route('home') }}" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
+                <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
                     <i class="bi bi-caret-left-fill"></i>
                     Back
                 </a>
@@ -32,15 +32,27 @@
                         <div class="card-header px-0">
                             <div class="row">
                                 <div class="col-md-10 d-flex align-items-center">
-                                    <a href="" class="text-decoration-none">
+                                    <a href="{{ route('see-profiles', ['user' => $post->user->id]) }}" class="text-decoration-none">
                                         <div class="d-flex align-items-center">
-                                            <img class="rounded-circle me-3" src="{{ asset($post->user->profile_pic) }}" alt="profile pic" height="30px">
+                                            <img class="object-fit-cover rounded-circle me-3" src="{{ asset($post->user->profile_pic) }}" alt="profile pic" height="30px" width="30px">
                                             <div class="d-flex flex-column">
                                                 <p class="fw-bold mb-0 text-white" style="font-size: 14px">{{ $post->user->username }}</p>
                                             </div>
                                         </div>
                                     </a>
                                 </div>
+                                @if (Auth::check() && $post->user_id === Auth::user()->id)
+                                    <div class="col-md-1">
+                                        <a href="{{ route('edit-post', ['post' => $post->id]) }}" class="btn btn-link ms-4 px-1 text-warning" type="button">
+                                            <i id="editIcon" class="bi bi-pencil-square"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button class="btn btn-link ms-0 px-1 text-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal_{{ $post->id }}">
+                                            <i id="bookmarkIcon" class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
+                                @endif
                             </div>
                             <p class="my-3">{{ $post->description }}</p>
                         </div>
@@ -86,4 +98,29 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteConfirmationModal_{{ $post->id }}" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel_{{ $post->id }}" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog" style="max-width:35%; margin-top: 70px; margin-right:25%">
+            <div class="modal-content text-white border solid border-secondary" style="background-color:black">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel_{{ $post->id }}">Konfirmasi Penghapusan</h5>
+                    <button type="button" class="btn-close text-white text-decoration-none" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <div class="modal-body pt-2 pb-0">
+                    Apakah Anda yakin ingin menghapus postingan ini?
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Batal</button>
+                    <form id="deleteForm_{{ $post->id }}" action="{{ route('delete-post', ['post' => $post->id]) }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        @method('POST')
+                        <button type="submit" class="btn btn-danger fw-bold">Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var deleteConfirmationModal_{{ $post->id }} = new bootstrap.Modal(document.getElementById('deleteConfirmationModal_{{ $post->id }}'));
+    </script>
 @endsection

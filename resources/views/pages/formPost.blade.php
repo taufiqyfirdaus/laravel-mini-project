@@ -27,7 +27,7 @@
                         <div class="row">
                             <div class="col-md-2 d-flex align-items-center">
                                 <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="{{ Auth::user()->profile_pic }}" alt="profile pic" height="30px">
+                                    <img class="object-fit-cover rounded-circle me-3" src="{{ Auth::user()->profile_pic }}" alt="profile pic" height="30px" width="30px">
                                 </div>
                             </div>
                             <div class="col-md-8">
@@ -63,7 +63,7 @@
                             <i class="bi bi-trash"></i>
                         </button>
                         @if ($errors->has('post_pic'))
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" style="display: block;">
                                 <b>{{ $errors->first('post_pic') }}</b>
                             </div>
                         @endif

@@ -12,6 +12,9 @@ class ExploreController extends Controller
     {
         $loggedInUserId = Auth::id();
         $randomUsers = $this->userRecommendation($loggedInUserId);
+
+        session(['randomUsers' => $randomUsers]);
+        
         return view('pages.explore', compact('randomUsers'));
     }
 
@@ -26,9 +29,12 @@ class ExploreController extends Controller
                             ->get();
         }
 
+        $randomUsers = session('randomUsers');
+
         return view('pages.explore', [
             'results' => $results,
-            'searchTerm' => $searchTerm
+            'searchTerm' => $searchTerm,
+            'randomUsers' => $randomUsers
         ]);
     }
     public function userRecommendation($loggedInUserId)

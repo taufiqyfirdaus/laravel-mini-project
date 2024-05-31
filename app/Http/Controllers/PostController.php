@@ -57,12 +57,45 @@ class PostController extends Controller
                    ->get();
     }
 
-    // public function showDetailPost($postSlug){
-    //     $post = Post::where('slug', $postSlug)->firstOrFail();
-    //     return view('pages.seePost', compact('post'));
-    // }
-
     public function showDetailPost(Post $post){
         return view('pages.seePost', compact('post'));
     }
+
+    public function editPost(Post $post)
+    {
+        return view('posts.edit', compact('post'));
+    }
+    
+    public function update(Request $request, Post $post)
+    {
+        $validator = Validator::make($request->all(), [
+            'description' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('edit-post', ['post' => $post->id])
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $post->description = $request->description;
+        
+        $post->save();
+            
+        return redirect()->route('see-post', ['post' => $post->id])
+        ->with('success', 'Data Post Berhasil diubah.');
+    }
+
+    public function delete(Post $post)
+    {
+        $post = Post::find($post->id);
+
+        $imagePath = public_path($post->post_pic);
+        if (file_exists($imagePath))
+            unlink($imagePath);
+
+        $post->delete();
+        return redirect()->route('show-profile')->with('success', 'Data Post berhasil dihapus.');
+    }
+    
 }
