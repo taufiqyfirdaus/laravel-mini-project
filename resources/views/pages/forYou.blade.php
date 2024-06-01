@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Beranda')
+@section('title', 'Beranda For You')
 @section('navbar')
     <nav class="navbar navbar-expand-lg navbar-dark position-fixed w-100" style="background-color: black; z-index:100;">
         <div class="container-fluid">
@@ -11,10 +11,10 @@
                     <div class="row">
                         <ul class="navbar-nav justify-content-md-center fw-bold">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">For You</a>
+                                <a class="nav-link active" style="border-bottom: 2px solid #439089;" aria-current="page" href="#">For You</a>
                             </li>
                             <li class="nav-item" style="margin-left: 10px;">
-                                <a class="nav-link" href="#">Following</a>
+                                <a class="nav-link" href="{{ route('home-following') }}">Following</a>
                             </li>
                         </ul>
                     </div>
@@ -40,11 +40,19 @@
                                     </div>
                                 </a>
                             </div>
+
                             <div class="col-md-2">
-                                <button class="btn btn-link ms-4 text-white" type="button" id="toggleBookmark">
-                                    <i id="bookmarkIcon" class="bi bi-bookmark"></i>
-                                </button>
+                                @auth
+                                    <button class="btn btn-link ms-4 text-white" type="button" id="toggleBookmark" data-post-id="{{ $item->id }}">
+                                        <i id="bookmarkIcon_{{ $item->id }}" class="bi {{ Auth::user()->bookmarks->contains($item->id) ? 'bi-bookmark-fill' : 'bi-bookmark' }}"></i>
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-link ms-4 text-white">
+                                        <i class="bi bi-bookmark"></i>
+                                    </a>
+                                @endauth
                             </div>
+
                         </div>
                         <p class="my-3">{{ $item->description }}</p>
                     </div>
@@ -59,10 +67,17 @@
                     <div class="card-body py-0">
                         <div class="row">
                             <div class="col-md-4 px-0">
-                                <button class="btn btn-link text-white text-decoration-none ps-0" type="button" id="toggleLike">
-                                    <i id="likeIcon" class="bi bi-heart me-1"></i>
-                                    0 Likes
-                                </button>
+                                @auth
+                                    <button class="btn btn-link text-white text-decoration-none ps-0" type="button" id="toggleLike" data-post-id="{{ $item->id }}">
+                                        <i id="likeIcon_{{ $item->id }}" class="bi {{ Auth::user()->likes->contains($item->id) ? 'bi-heart-fill' : 'bi-heart' }} me-1"></i>
+                                        <span id="likesCount_{{ $item->id }}" class="likes-count">{{ $item->likes->count() }}</span> Likes
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-link text-white text-decoration-none ps-0">
+                                        <i id="likeIcon" class="bi bi-heart me-1"></i>
+                                        {{ $item->likes->count() }} Likes
+                                    </a>
+                                @endauth
                             </div>
                             <div class="col-md-6 px-0">
                                 <button class="btn btn-link text-white text-decoration-none ps-0" type="button" id="toggleComment">
@@ -105,4 +120,67 @@
             </div>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('#toggleBookmark').forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                const icon = document.querySelector(`#bookmarkIcon_${postId}`);
+
+                fetch(`/bookmark/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            if (icon.classList.contains('bi-bookmark')) {
+                                icon.classList.remove('bi-bookmark');
+                                icon.classList.add('bi-bookmark-fill');
+                            } else {
+                                icon.classList.remove('bi-bookmark-fill');
+                                icon.classList.add('bi-bookmark');
+                            }
+                        }
+                    });
+            });
+        });
+
+        document.querySelectorAll('#toggleLike').forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                const icon = document.querySelector(`#likeIcon_${postId}`);
+                const likesCountElement = document.querySelector(`#likesCount_${postId}`);
+
+                fetch(`/like/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'liked') {
+                            if (icon.classList.contains('bi-heart')) {
+                                icon.classList.remove('bi-heart');
+                                icon.classList.add('bi-heart-fill');
+                            }
+                            likesCountElement.textContent = parseInt(likesCountElement.textContent) + 1;
+                        } else if (data.status === 'unliked') {
+                            if (icon.classList.contains('bi-heart-fill')) {
+                                icon.classList.remove('bi-heart-fill');
+                                icon.classList.add('bi-heart');
+                            }
+                            likesCountElement.textContent = parseInt(likesCountElement.textContent) - 1;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    </script>
 @endsection

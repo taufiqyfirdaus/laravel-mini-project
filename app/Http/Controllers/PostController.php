@@ -44,9 +44,30 @@ class PostController extends Controller
         $loggedInUserId = Auth::id();
         $randomUsers = $this->userRecommendation($loggedInUserId);
         
-        $posts = Post::orderBy('created_at', 'desc')->get();
+        $refresh = $request->query('refresh');
+    
+        if($refresh) {
+            return redirect()->route('home');
+        }
+    
+        $posts = Post::with('likes')->orderBy('created_at', 'desc')->get();
 
-        return view('pages.home', compact('posts', 'randomUsers'));
+        return view('pages.forYou', compact('posts', 'randomUsers'));
+    }
+    
+    public function showPostFollowing(Request $request){
+        $loggedInUserId = Auth::id();
+        $randomUsers = $this->userRecommendation($loggedInUserId);
+        
+        $refresh = $request->query('refresh');
+    
+        if($refresh) {
+            return redirect()->route('home-following');
+        }
+    
+        $posts = Post::with('likes')->orderBy('created_at', 'desc')->get();
+
+        return view('pages.following', compact('posts', 'randomUsers'));
     }
 
     public function userRecommendation($loggedInUserId)

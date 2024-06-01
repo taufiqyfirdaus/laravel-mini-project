@@ -4,7 +4,7 @@
     <div class="row">
         <div class="d-flex flex-column px-5" style="margin-top:25px; margin-bottom:50px;">
             <div class="w-100 d-flex justify-content-start">
-                <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
+                <a href="{{ url()->previous() }}" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
                     <i class="bi bi-caret-left-fill"></i>
                     Back
                 </a>

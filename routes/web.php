@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ExploreController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -31,13 +33,22 @@ Route::post('/register-user', [UserController::class, 'registerUser'])->name('re
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::prefix('')->middleware('authenticate')->group(function () {
-    Route::get('/my-profile', [UserController::class, 'showProfile'])->name('show-profile');
-    Route::post('/verify-password', [UserController::class, 'verifyPassword'])->name('verify-password');
-    Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('edit-profile');
-    Route::put('/update-user/{user}', [UserController::class , 'update'])->name('update-profile');
-    Route::get('/form-post', [PostController::class, 'showFormAdd'])->name('show-form-add-post');
-    Route::post('/{user}/store-post', [PostController::class, 'store'])->name('store-post');
-    Route::get('/edit-post/{post}', [PostController::class, 'editPost'])->name('edit-post');
-    Route::put('/update-post/{post}', [PostController::class , 'update'])->name('update-post');
-    Route::post('/delete-post/{post}', [PostController::class , 'delete'])->name('delete-post');
+    Route::prefix('')->middleware('auth')->group(function () {
+        Route::get('/home-following', [PostController::class, 'showPostFollowing'])->name('home-following');
+        
+        Route::get('/my-profile', [UserController::class, 'showProfile'])->name('show-profile');
+        Route::post('/verify-password', [UserController::class, 'verifyPassword'])->name('verify-password');
+        Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('edit-profile');
+        Route::put('/update-user/{user}', [UserController::class , 'update'])->name('update-profile');
+        Route::get('/form-post', [PostController::class, 'showFormAdd'])->name('show-form-add-post');
+        Route::post('/{user}/store-post', [PostController::class, 'store'])->name('store-post');
+        Route::get('/edit-post/{post}', [PostController::class, 'editPost'])->name('edit-post');
+        Route::put('/update-post/{post}', [PostController::class , 'update'])->name('update-post');
+        Route::post('/delete-post/{post}', [PostController::class , 'delete'])->name('delete-post');
+    
+        Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('show-bookmarks');
+        Route::post('/bookmark/{post}', [BookmarkController::class, 'addBookmark'])->name('add-bookmark');
+    
+        Route::post('/like/{post}', [LikeController::class, 'addLike'])->name('add-like');
+    });
 });

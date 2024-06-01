@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -50,6 +51,11 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    public function likes()
+    {
+        return $this->belongsToMany(Post::class, 'likes');
+    }
+    
     public function followers()
     {
         return $this->hasMany(Follower::class, 'follower_id', 'id');
@@ -63,6 +69,11 @@ class User extends Authenticatable
     public function isFollowed()
     {
         return $this->hasMany(Follower::class, 'follower_id')->where('following_id', auth()->id());
+    }
+
+    public function bookmarks(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'bookmarks')->withTimestamps();
     }
 
 }

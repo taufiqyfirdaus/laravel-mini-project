@@ -21,7 +21,7 @@
     <div class="row">
         <div class="d-flex flex-column align-items-center" style="margin-top:80px; margin-bottom:150px;">
             <div class="w-100 d-flex justify-content-start">
-                <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
+                <a href="{{ url()->previous() }}" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
                     <i class="bi bi-caret-left-fill"></i>
                     Back
                 </a>
@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="col-md-1">
                                         <button class="btn btn-link ms-0 px-1 text-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal_{{ $post->id }}">
-                                            <i id="bookmarkIcon" class="bi bi-trash-fill"></i>
+                                            <i id="deleteIcon" class="bi bi-trash-fill"></i>
                                         </button>
                                     </div>
                                 @endif
@@ -66,23 +66,41 @@
                         <hr>
                         <div class="d-flex justify-content-between mb-1">
                             <div>
-                                <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
-                                    <i id="likeIcon" class="bi bi-heart fs-5"></i>
-                                </a>
-                                <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
-                                    <i id="commentIcon" class="bi bi-chat fs-5"></i>
-                                </a>
-                                <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
-                                    <i id="shareIcon" class="bi bi-send fs-5"></i>
-                                </a>
+                                @auth
+                                    <button class="btn btn-link text-decoration-none ps-0" type="button" id="toggleLike" style="color:#51BED4" data-post-id="{{ $post->id }}">
+                                        <i id="likeIcon_{{ $post->id }}" class="bi {{ Auth::user()->likes->contains($post->id) ? 'bi-heart-fill' : 'bi-heart' }} fs-5"></i>
+                                    </button>
+                                    <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
+                                        <i id="commentIcon" class="bi bi-chat fs-5"></i>
+                                    </a>
+                                    <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
+                                        <i id="shareIcon" class="bi bi-send fs-5"></i>
+                                    </a>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
+                                        <i id="likeIcon" class="bi bi-heart fs-5"></i>
+                                    </a>
+                                    <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
+                                        <i id="commentIcon" class="bi bi-chat fs-5"></i>
+                                    </a>
+                                    <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
+                                        <i id="shareIcon" class="bi bi-send fs-5"></i>
+                                    </a>
+                                @endauth
                             </div>
                             <div>
-                                <a href="" class="btn btn-link text-decoration-none ps-0" style="color:#51BED4">
-                                    <i id="bookmarkIcon" class="bi bi-bookmark fs-5"></i>
-                                </a>
+                                @auth
+                                    <button class="btn btn-link ps-0" type="button" id="toggleBookmark" style="color:#51BED4" data-post-id="{{ $post->id }}">
+                                        <i id="bookmarkIcon_{{ $post->id }}" class="bi {{ Auth::user()->bookmarks->contains($post->id) ? 'bi-bookmark-fill' : 'bi-bookmark' }} fs-5"></i>
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-link ps-0" style="color:#51BED4">
+                                        <i id="bookmarkIcon" class="bi bi-bookmark fs-5"></i>
+                                    </a>
+                                @endauth
                             </div>
                         </div>
-                        <h6 class="mb-0">0 Likes</h6>
+                        <h6 class="likes-count mb-0">{{ $post->likes->count() }} Likes</h6>
                         <p class="text-secondary mb-4 mt-1" style="font-size: 13px">{{ $post->created_at->diffForHumans() }}</p>
                         <div class="row mb-1">
                             <div class="col-md-10">
@@ -99,7 +117,8 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="deleteConfirmationModal_{{ $post->id }}" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel_{{ $post->id }}" aria-hidden="true" data-bs-backdrop="false">
+    <div class="modal fade" id="deleteConfirmationModal_{{ $post->id }}" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel_{{ $post->id }}" aria-hidden="true"
+        data-bs-backdrop="false">
         <div class="modal-dialog" style="max-width:35%; margin-top: 70px; margin-right:25%">
             <div class="modal-content text-white border solid border-secondary" style="background-color:black">
                 <div class="modal-header border-0 pb-0">
@@ -121,6 +140,65 @@
         </div>
     </div>
     <script>
-        var deleteConfirmationModal_{{ $post->id }} = new bootstrap.Modal(document.getElementById('deleteConfirmationModal_{{ $post->id }}'));
+        document.querySelectorAll('#toggleBookmark').forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                const icon = document.querySelector(`#bookmarkIcon_${postId}`);
+
+                fetch(`/bookmark/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            if (icon.classList.contains('bi-bookmark')) {
+                                icon.classList.remove('bi-bookmark');
+                                icon.classList.add('bi-bookmark-fill');
+                            } else {
+                                icon.classList.remove('bi-bookmark-fill');
+                                icon.classList.add('bi-bookmark');
+                            }
+                        }
+                    });
+            });
+        });
+        document.querySelectorAll('#toggleLike').forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                const icon = document.querySelector(`#likeIcon_${postId}`);
+                const likesCount = document.querySelector('.likes-count');
+
+                fetch(`/like/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'liked') {
+                            if (icon.classList.contains('bi-heart')) {
+                                icon.classList.remove('bi-heart');
+                                icon.classList.add('bi-heart-fill');
+                            }
+                            likesCount.textContent = `${parseInt(likesCount.textContent) + 1} Likes`;
+                        } else if (data.status === 'unliked') {
+                            if (icon.classList.contains('bi-heart-fill')) {
+                                icon.classList.remove('bi-heart-fill');
+                                icon.classList.add('bi-heart');
+                            }
+                            likesCount.textContent = `${parseInt(likesCount.textContent) - 1} Likes`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
     </script>
 @endsection

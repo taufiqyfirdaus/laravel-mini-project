@@ -4,7 +4,7 @@
     <div class="row">
         <div class="d-flex flex-column px-5" style="margin-top:25px; margin-bottom:150px;">
             <div class="w-100 d-flex justify-content-start">
-                <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
+                <a href="{{ url()->previous() }}" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
                     <i class="bi bi-caret-left-fill"></i>
                     Back
                 </a>
@@ -15,8 +15,8 @@
                 <div class="form-group" style="padding: 0 200px 0 120px">
                     <div class="d-flex justify-content-center position-relative">
                         <img id="profileImage" class="object-fit-cover rounded-circle ms-2 me-2" src="{{ asset($user->profile_pic) }}" alt="profile pic" width="100px" height="100px">
-                        <label for="profilePicInput" class="position-absolute" style="bottom: 0; right: 10px; cursor: pointer;">
-                            <i class="bi bi-camera-fill text-white" style="font-size: 20px;"></i>
+                        <label for="profilePicInput" class="position-absolute bg-light border solid border-secondary rounded-circle d-flex justify-content-center" style="bottom: 2px; margin-left:80px; cursor: pointer; width:30px; height:30px">
+                            <i class="bi bi-camera-fill m-1" style="font-size: 15px; color:#439089;"></i>
                             <input type="file" class="form-control {{ $errors->has('profile_pic') ? 'is-invalid' : '' }}" id="profilePicInput" name="profile_pic" accept="image/*" style="display: none;"
                                 value="{{ $user->profile_pic }}">
                         </label>
