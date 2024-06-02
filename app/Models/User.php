@@ -58,17 +58,22 @@ class User extends Authenticatable
     
     public function followers()
     {
-        return $this->hasMany(Follower::class, 'follower_id', 'id');
+        return $this->hasMany(Follower::class, 'following_id');
     }
 
     public function followings()
     {
-        return $this->hasMany(Follower::class, 'following_id');
+        return $this->hasMany(Follower::class, 'follower_id');
     }
 
-    public function isFollowed()
+    public function isFollowedBy($userId)
     {
-        return $this->hasMany(Follower::class, 'follower_id')->where('following_id', auth()->id());
+        return $this->followers()->where('follower_id', $userId)->exists();
+    }
+
+    public function isFollowing($userId)
+    {
+        return $this->followings()->where('following_id', $userId)->exists();
     }
 
     public function bookmarks(): BelongsToMany

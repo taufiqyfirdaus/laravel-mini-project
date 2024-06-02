@@ -91,7 +91,7 @@ class UserController extends Controller
 
         $posts = $user->posts()->orderBy('created_at', 'desc')->get();
         return view('profile.index', compact('user', 'posts'));
-        }
+    }
 
     public function seeProfiles(User $user)
     {
@@ -159,4 +159,5 @@ class UserController extends Controller
         return redirect()->route('show-profile')
         ->with('success', 'Data User Berhasil diubah.');
     }
+
 }

@@ -21,17 +21,24 @@
                                 <p class="text-secondary me-3 mb-2" style="font-size: 14px;">
                                     <b class="text-white">{{ $posts->count() }}</b> Posts
                                 </p>
-                                <p class="text-secondary me-3 mb-2" style="font-size: 14px;">
-                                    <b class="text-white">0</b> Followers
-                                </p>
-                                <p class="text-secondary mb-2" style="font-size: 14px;">
-                                    <b class="text-white">0</b> Following
-                                </p>
+                                <a href="{{ route('show-followers', ['id' => $user->id]) }}" class="text-decoration-none">
+                                    <p class="text-secondary me-3 mb-2" style="font-size: 14px;">
+                                        <b class="text-white followers-count">{{ $user->followers->count() }}</b> Followers
+                                    </p>
+                                </a>
+                                <a href="{{ route('show-followings', ['id' => $user->id]) }}" class="text-decoration-none">
+                                    <p class="text-secondary mb-2" style="font-size: 14px;">
+                                        <b class="text-white">{{ $user->followings->count() }}</b> Following
+                                    </p>
+                                </a>
                             </div>
                             <p class="mb-1 text-white" style="font-size: 14px;">{{ $user->name }}</p>
                             <p class="mb-3 text-white" style="font-size: 11px;">{{ $user->bio }}</p>
-                            <button class="btn btn-sm text-white fw-bold" style="background-color: #439089;" type="button" id="toggleFollow">
-                                Follow
+
+                            <button class="btn btn-sm text-white fw-bold follow-btn"
+                                style="{{ Auth::user()->isFollowing($user->id) ? 'background-color: none; border: 2px solid #439089;' : 'background-color: #439089; border: 2px solid #439089;' }}" type="button" id="toggleFollow"
+                                data-user-id="{{ $user->id }}">
+                                {{ Auth::user()->isFollowing($user->id) ? 'Unfollow' : 'Follow' }}
                             </button>
                         </div>
                     </div>
@@ -40,9 +47,9 @@
             <div class="row d-flex justify-content-center mt-5">
                 <div class="col-md-10 d-flex flex-wrap">
                     @if ($posts->isEmpty())
-                    <div class="d-flex justify-content-center align-items-center w-100" style="height: 360px;">
-                        <p class="text-secondary">Belum ada postingan yang dapat ditampilkan</p>
-                    </div>
+                        <div class="d-flex justify-content-center align-items-center w-100" style="height: 360px;">
+                            <p class="text-secondary">Belum ada postingan yang dapat ditampilkan</p>
+                        </div>
                     @else
                         @foreach ($posts as $item)
                             <a href="{{ route('see-post', ['post' => $item->id]) }}" class="m-2">
@@ -57,4 +64,30 @@
     <div class="footer w-100 p-4 text-center">
         <p class="mb-5 text-secondary">Copyright 2024</p>
     </div>
+    <script>
+        document.getElementById('toggleFollow').addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            fetch(`/follow/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'followed') {
+                        this.textContent = 'Unfollow';
+                        this.style.backgroundColor = 'transparent';
+                    } else if (data.status === 'unfollowed') {
+                        this.textContent = 'Follow';
+                        this.style.backgroundColor = '#439089';
+                    }
+                    document.querySelector('.followers-count').textContent = data.followers_count;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
 @endsection

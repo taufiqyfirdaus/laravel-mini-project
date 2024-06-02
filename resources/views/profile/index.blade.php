@@ -2,13 +2,7 @@
 @section('title', 'Profile')
 @section('content')
     <div class="row">
-        <div class="d-flex flex-column px-5" style="margin-top:25px; margin-bottom:50px;">
-            <div class="w-100 d-flex justify-content-start">
-                <a href="{{ url()->previous() }}" class="btn btn-link text-decoration-none ps-5 text-white fw-bold mb-3">
-                    <i class="bi bi-caret-left-fill"></i>
-                    Back
-                </a>
-            </div>
+        <div class="d-flex flex-column px-5" style="margin-top:70px; margin-bottom:50px;">
             <div class="row" style="padding: 0 200px 0 120px">
                 <div class="col-md-2">
                     <img class="object-fit-cover rounded-circle ms-2 me-2" src="{{ asset(Auth::user()->profile_pic) }}" alt="profile pic" width="120px" height="120px">
@@ -21,12 +15,16 @@
                                 <p class="text-secondary me-3 mb-2" style="font-size: 14px;">
                                     <b class="text-white">{{ $posts->count() }}</b> Posts
                                 </p>
-                                <p class="text-secondary me-3 mb-2" style="font-size: 14px;">
-                                    <b class="text-white">0</b> Followers
-                                </p>
-                                <p class="text-secondary mb-2" style="font-size: 14px;">
-                                    <b class="text-white">0</b> Following
-                                </p>
+                                <a href="{{ route('show-followers', ['id' => Auth::user()->id]) }}" class="text-decoration-none">
+                                    <p class="text-secondary me-3 mb-2" style="font-size: 14px;">
+                                        <b class="text-white followers-count">{{ $user->followers->count() }}</b> Followers
+                                    </p>
+                                </a>
+                                <a href="{{ route('show-followings', ['id' => Auth::user()->id]) }}" class="text-decoration-none">
+                                    <p class="text-secondary mb-2" style="font-size: 14px;">
+                                        <b class="text-white">{{ $user->followings->count() }}</b> Following
+                                    </p>
+                                </a>
                             </div>
                             <p class="mb-1 text-white" style="font-size: 14px;">{{ Auth::user()->name }}</p>
                             <p class="mb-0 text-white" style="font-size: 11px;">{{ Auth::user()->bio }}</p>
@@ -42,9 +40,9 @@
             <div class="row d-flex justify-content-center mt-5">
                 <div class="col-md-10 d-flex flex-wrap">
                     @if ($posts->isEmpty())
-                    <div class="d-flex justify-content-center align-items-center w-100" style="height: 360px;">
-                        <p class="text-secondary">Belum ada postingan yang dapat ditampilkan</p>
-                    </div>
+                        <div class="d-flex justify-content-center align-items-center w-100" style="height: 360px;">
+                            <p class="text-secondary">Belum ada postingan yang dapat ditampilkan</p>
+                        </div>
                     @else
                         @foreach ($posts as $item)
                             <a href="{{ route('see-post', ['post' => $item->id]) }}" class="m-2">

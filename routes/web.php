@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ExploreController;
+use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
@@ -50,5 +51,11 @@ Route::prefix('')->middleware('authenticate')->group(function () {
         Route::post('/bookmark/{post}', [BookmarkController::class, 'addBookmark'])->name('add-bookmark');
     
         Route::post('/like/{post}', [LikeController::class, 'addLike'])->name('add-like');
+        
+        Route::post('/follow/{id}', [FollowerController::class, 'addFollow'])->name('follow');
+        Route::get('/followers/{id}', [FollowerController::class, 'showFollowers'])->name('show-followers');
+        Route::get('/followers-search', [FollowerController::class, 'searchFollowers'])->name('followers-search');
+        Route::get('/followings/{id}', [FollowerController::class, 'showFollowings'])->name('show-followings');
+        Route::get('/followings-search', [FollowerController::class, 'searchFollowings'])->name('followings-search');
     });
 });

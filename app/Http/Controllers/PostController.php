@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Follower;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -42,8 +43,9 @@ class PostController extends Controller
     
     public function showPost(Request $request){
         $loggedInUserId = Auth::id();
+
         $randomUsers = $this->userRecommendation($loggedInUserId);
-        
+            
         $refresh = $request->query('refresh');
     
         if($refresh) {
@@ -57,6 +59,15 @@ class PostController extends Controller
     
     public function showPostFollowing(Request $request){
         $loggedInUserId = Auth::id();
+
+        $followingIds = Follower::where('follower_id', $loggedInUserId)->pluck('following_id');
+
+        $posts = Post::whereIn('user_id', $followingIds)
+            ->orWhere('user_id', $loggedInUserId)
+            ->with('likes')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
         $randomUsers = $this->userRecommendation($loggedInUserId);
         
         $refresh = $request->query('refresh');
@@ -64,18 +75,19 @@ class PostController extends Controller
         if($refresh) {
             return redirect()->route('home-following');
         }
-    
-        $posts = Post::with('likes')->orderBy('created_at', 'desc')->get();
 
-        return view('pages.following', compact('posts', 'randomUsers'));
+        return view('pages.followingPost', compact('posts', 'randomUsers'));
     }
 
     public function userRecommendation($loggedInUserId)
     {
         return User::where('id', '!=', $loggedInUserId)
-                   ->inRandomOrder()
-                   ->limit(3)
-                   ->get();
+               ->whereDoesntHave('followers', function($query) use ($loggedInUserId) {
+                   $query->where('follower_id', $loggedInUserId);
+               })
+               ->inRandomOrder()
+               ->limit(3)
+               ->get();
     }
 
     public function showDetailPost(Post $post){

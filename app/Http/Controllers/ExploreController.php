@@ -12,14 +12,17 @@ class ExploreController extends Controller
     {
         $loggedInUserId = Auth::id();
         $randomUsers = $this->userRecommendation($loggedInUserId);
-
-        session(['randomUsers' => $randomUsers]);
         
-        return view('pages.explore', compact('randomUsers'));
+        return view('pages.explore', [
+            'randomUsers' => $randomUsers
+        ]);
     }
+
 
     public function search(Request $request)
     {
+        $loggedInUserId = Auth::id();
+        
         $searchTerm = $request->input('search');
         $results = [];
 
@@ -29,7 +32,7 @@ class ExploreController extends Controller
                             ->get();
         }
 
-        $randomUsers = session('randomUsers');
+        $randomUsers = $this->userRecommendation($loggedInUserId);
 
         return view('pages.explore', [
             'results' => $results,
@@ -40,8 +43,11 @@ class ExploreController extends Controller
     public function userRecommendation($loggedInUserId)
     {
         return User::where('id', '!=', $loggedInUserId)
-                   ->inRandomOrder()
-                   ->limit(3)
-                   ->get();
+               ->whereDoesntHave('followers', function($query) use ($loggedInUserId) {
+                   $query->where('follower_id', $loggedInUserId);
+               })
+               ->inRandomOrder()
+               ->limit(3)
+               ->get();
     }
 }

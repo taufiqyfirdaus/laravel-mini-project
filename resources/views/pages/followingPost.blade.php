@@ -95,7 +95,7 @@
                             </a>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-link text-decoration-none fw-bold ms-3" style="color: #439089;" type="button" id="toggleFollow">
+                            <button class="btn btn-link text-decoration-none fw-bold ms-3 follow-btn" style="color: #439089;" type="button" data-user-id="{{ $item->id }}">
                                 Follow
                             </button>
                         </div>
@@ -162,6 +162,29 @@
                                 icon.classList.add('bi-heart');
                             }
                             likesCountElement.textContent = parseInt(likesCountElement.textContent) - 1;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+        
+        document.querySelectorAll('.follow-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.dataset.userId;
+
+                fetch(`/follow/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'followed') {
+                            window.location.reload();
                         }
                     })
                     .catch(error => {
